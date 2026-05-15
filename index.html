@@ -389,6 +389,22 @@ body {
   </div>
 
   <div class="cp-section">
+    <div class="cp-section-label">폴더</div>
+    <div class="tool-card">
+      <div class="tool-row">
+        <select class="tool-select" id="folder-filter" onchange="setActiveFolder(this.value)">
+          <option value="all">전체 폴더</option>
+        </select>
+      </div>
+      <div class="tool-row">
+        <input class="tool-input" id="folder-name" type="text" placeholder="새 폴더명">
+        <button class="tool-button" type="button" onclick="createFolder()">생성</button>
+      </div>
+      <div class="tool-hint">폴더별로 멘트를 나눠 보고, 일괄 추가 시 넣을 폴더를 선택할 수 있어요.</div>
+    </div>
+  </div>
+
+  <div class="cp-section">
     <div class="cp-section-label">버전 저장</div>
     <div class="tool-card">
       <div class="tool-row">
@@ -412,6 +428,9 @@ body {
   <div class="cp-section">
     <div class="cp-section-label">문구 일괄 추가</div>
     <div class="tool-card">
+      <div class="tool-row">
+        <select class="tool-select" id="bulk-folder-select"></select>
+      </div>
       <textarea class="tool-textarea" id="bulk-input" placeholder="추가할 문구를 붙여넣어 주세요"></textarea>
       <div class="tool-row">
         <button class="tool-button" type="button" onclick="addBulkTexts()">말풍선 추가</button>
@@ -480,6 +499,12 @@ body {
 <script>
 // ── 전체 텍스트 ──
 let TEXTS = [];
+let FOLDERS = [
+  { id: 'teen-mode', name: '틴모드 멘트' },
+  { id: 'basic-care-mode', name: '기본관리모드 멘트' },
+];
+let ITEM_FOLDERS = [];
+let activeFolder = 'all';
 
 // ── 검수 제안 ──
 const SUGGESTIONS = {
@@ -566,6 +591,9 @@ function persistDraft() {
   try {
     localStorage.setItem(DRAFT_KEY, JSON.stringify({
       texts: TEXTS,
+      folders: FOLDERS,
+      itemFolders: ITEM_FOLDERS,
+      activeFolder,
       liveEdits: LIVE_EDITS,
       savedAt: new Date().toISOString(),
     }));
@@ -578,6 +606,10 @@ function loadDraft() {
   const draft = parseStoredJson(DRAFT_KEY, null);
   if (!draft || !Array.isArray(draft.texts)) return;
   TEXTS = draft.texts;
+  FOLDERS = Array.isArray(draft.folders) && draft.folders.length > 0 ? draft.folders : FOLDERS;
+  ITEM_FOLDERS = Array.isArray(draft.itemFolders) ? draft.itemFolders : [];
+  normalizeItemFolders();
+  activeFolder = draft.activeFolder || 'all';
   LIVE_EDITS = Array.isArray(draft.liveEdits) ? draft.liveEdits : [];
   setTimeout(() => setSaveStatus(`임시저장 복원됨 · ${formatSavedAt(draft.savedAt)}`), 0);
 }
@@ -611,6 +643,9 @@ function saveCurrentVersion() {
     name,
     savedAt: new Date().toISOString(),
     texts: [...TEXTS],
+    folders: [...FOLDERS],
+    itemFolders: [...ITEM_FOLDERS],
+    activeFolder,
     liveEdits: [...LIVE_EDITS],
   };
   const versions = [...getSavedVersions(), version];
@@ -629,10 +664,15 @@ function loadSelectedVersion() {
     return;
   }
   TEXTS = [...selected.texts];
+  FOLDERS = Array.isArray(selected.folders) && selected.folders.length > 0 ? [...selected.folders] : FOLDERS;
+  ITEM_FOLDERS = Array.isArray(selected.itemFolders) ? [...selected.itemFolders] : [];
+  normalizeItemFolders();
+  activeFolder = selected.activeFolder || 'all';
   LIVE_EDITS = Array.isArray(selected.liveEdits) ? [...selected.liveEdits] : [];
   const searchInput = document.getElementById('search-input');
   if (searchInput) searchInput.value = '';
-  filtered = [...TEXTS];
+  syncFolderControls();
+  filtered = getVisibleItems();
   render();
   persistDraft();
   if (historyOpen) renderHistoryList();
@@ -665,8 +705,91 @@ function parseBulkText(raw) {
     .filter(Boolean);
 }
 
+function normalizeItemFolders() {
+  const fallback = FOLDERS[0]?.id || 'default';
+  ITEM_FOLDERS = TEXTS.map((_, idx) => ITEM_FOLDERS[idx] || fallback);
+}
+
+function getFolderName(folderId) {
+  return FOLDERS.find(folder => folder.id === folderId)?.name || '미분류';
+}
+
+function makeFolderId(name) {
+  const base = name.toLowerCase().replace(/[^a-z0-9가-힣]+/g, '-').replace(/^-|-$/g, '');
+  return `${base || 'folder'}-${Date.now()}`;
+}
+
+function syncFolderControls() {
+  const filter = document.getElementById('folder-filter');
+  const bulk = document.getElementById('bulk-folder-select');
+  if (filter) {
+    filter.innerHTML = '<option value="all">전체 폴더</option>';
+    FOLDERS.forEach(folder => {
+      const count = ITEM_FOLDERS.filter(id => id === folder.id).length;
+      const option = document.createElement('option');
+      option.value = folder.id;
+      option.textContent = `${folder.name} (${count})`;
+      filter.appendChild(option);
+    });
+    filter.value = activeFolder;
+  }
+  if (bulk) {
+    bulk.innerHTML = '';
+    FOLDERS.forEach(folder => {
+      const option = document.createElement('option');
+      option.value = folder.id;
+      option.textContent = folder.name;
+      bulk.appendChild(option);
+    });
+    bulk.value = activeFolder === 'all' ? (FOLDERS[0]?.id || '') : activeFolder;
+  }
+}
+
+function createFolder() {
+  const input = document.getElementById('folder-name');
+  const name = (input?.value || '').trim();
+  if (!name) {
+    setSaveStatus('새 폴더명을 입력해 주세요.');
+    return;
+  }
+  if (FOLDERS.some(folder => folder.name === name)) {
+    setSaveStatus('이미 있는 폴더명이에요.');
+    return;
+  }
+  const folder = { id: makeFolderId(name), name };
+  FOLDERS.push(folder);
+  activeFolder = folder.id;
+  if (input) input.value = '';
+  syncFolderControls();
+  onSearch(document.getElementById('search-input')?.value || '');
+  persistDraft();
+  setSaveStatus(`${name} 폴더 생성 완료`);
+}
+
+function setActiveFolder(folderId) {
+  activeFolder = folderId || 'all';
+  const searchInput = document.getElementById('search-input');
+  filtered = getVisibleItems(searchInput?.value || '');
+  syncFolderControls();
+  render(searchInput?.value || '');
+  persistDraft();
+}
+
+function getVisibleItems(query = '') {
+  const q = query.trim();
+  return TEXTS
+    .map((text, idx) => ({ text, originalIdx: idx }))
+    .filter(({ text, originalIdx }) => {
+      const matchesFolder = activeFolder === 'all' || ITEM_FOLDERS[originalIdx] === activeFolder;
+      const matchesQuery = !q || text.includes(q);
+      return matchesFolder && matchesQuery;
+    });
+}
+
 function addBulkTexts() {
   const textarea = document.getElementById('bulk-input');
+  const folderSelect = document.getElementById('bulk-folder-select');
+  const targetFolder = folderSelect?.value || FOLDERS[0]?.id || 'default';
   const items = parseBulkText(textarea?.value || '');
   if (items.length === 0) {
     setSaveStatus('추가할 문구를 입력해 주세요.');
@@ -674,6 +797,7 @@ function addBulkTexts() {
   }
   const startIdx = TEXTS.length;
   TEXTS.push(...items);
+  ITEM_FOLDERS.push(...items.map(() => targetFolder));
   items.forEach((text, offset) => {
     LIVE_EDITS.push({
       idx: startIdx + offset + 1,
@@ -685,7 +809,9 @@ function addBulkTexts() {
   if (textarea) textarea.value = '';
   const searchInput = document.getElementById('search-input');
   const query = searchInput ? searchInput.value.trim() : '';
-  filtered = query ? TEXTS.filter(t => t.includes(query)) : [...TEXTS];
+  activeFolder = targetFolder;
+  syncFolderControls();
+  filtered = getVisibleItems(query);
   render(query);
   persistDraft();
   if (historyOpen) renderHistoryList();
@@ -821,11 +947,11 @@ function isClipped(text) {
   return countLines(text) > 2;
 }
 
-let filtered = [...TEXTS];
+let filtered = getVisibleItems();
 
 function getClampedItems() {
-  return TEXTS
-    .map((t, i) => ({ idx: i + 1, text: t }))
+  return getVisibleItems(document.getElementById('search-input')?.value || '')
+    .map(({ text, originalIdx }) => ({ idx: originalIdx + 1, text }))
     .filter(({ text }) => isClipped(text));
 }
 
@@ -863,8 +989,7 @@ function render(query = '') {
   let suggestCount = 0;
   const clampedItems = [];
 
-  filtered.forEach((text) => {
-    const originalIdx = TEXTS.indexOf(text);
+  filtered.forEach(({ text, originalIdx }) => {
     const clipped = isClipped(text);
     const suggestion = SUGGESTIONS[text.trim()];
     if (clipped) { clampCount++; clampedItems.push({ idx: originalIdx + 1, text }); }
@@ -880,7 +1005,7 @@ function render(query = '') {
 
     const idx = document.createElement('div');
     idx.className = 'bubble-index';
-    idx.textContent = originalIdx + 1;
+    idx.innerHTML = `${originalIdx + 1}<br><span style="font-size:9px;color:#9aa2aa;">${escapeHtml(getFolderName(ITEM_FOLDERS[originalIdx]))}</span>`;
 
     const comp = document.createElement('div');
     comp.className = 'bubble-component';
@@ -1011,7 +1136,8 @@ function render(query = '') {
   updateStats(filtered.length, clampCount, suggestCount);
   updateClampShortcuts(clampedItems);
   document.getElementById('count-badge').textContent = filtered.length + '개';
-  document.getElementById('main-title').textContent = query ? `"${query}" 검색 결과` : '전체 문구';
+  const folderLabel = activeFolder === 'all' ? '전체 폴더' : getFolderName(activeFolder);
+  document.getElementById('main-title').textContent = query ? `${folderLabel} · "${query}" 검색 결과` : folderLabel;
 }
 
 function updateStats(showing, clamp, suggest) {
@@ -1049,13 +1175,18 @@ function updateClampShortcuts(items) {
 
 function onSearch(query) {
   const q = query.trim();
-  filtered = q ? TEXTS.filter(t => t.includes(q)) : [...TEXTS];
+  filtered = getVisibleItems(q);
   render(q);
 }
 
 loadDraft();
-filtered = [...TEXTS];
+normalizeItemFolders();
+syncFolderControls();
+filtered = getVisibleItems();
 syncVersionSelect();
+document.getElementById('history-list').style.display = 'none';
+document.getElementById('history-main-arrow').classList.remove('open');
+renderHistoryList();
 render();
 </script>
 
