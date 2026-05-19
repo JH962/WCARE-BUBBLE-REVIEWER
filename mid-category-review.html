@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중카테고리 메뉴 검수</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root {
+  color-scheme: light;
+  --color-white: #FFFFFF;
+  --color-gray-5: #F9FAFB;
+  --color-gray-8: #F7F8FA;
+  --color-gray-10: #F5F6F8;
+  --color-gray-15: #E8EAED;
+  --color-gray-20: #D8DAE0;
+  --color-gray-30: #D1D5DB;
+  --color-gray-40: #B0B7C3;
+  --color-gray-50: #A0A5B0;
+  --color-gray-60: #8B93A1;
+  --color-gray-70: #5A5F6A;
+  --color-gray-80: #374151;
+  --color-gray-85: #292C33;
+  --color-gray-90: #21242A;
+  --color-gray-100: #131518;
+  --color-black: #000000;
+  --color-olive-green-20: #DCFCE7;
+  --color-olive-green-50: #22C55E;
+  --color-olive-green-70: #16A34A;
+  --color-olive-green-90: #15803D;
+  --color-coral-orange: #92400E;
+  --color-coral-orange-line: #F59E0B;
+  --color-system-blue: #2563EB;
+  --color-system-red: #B91C1C;
+  --dim-black-3: rgba(0, 0, 0, 0.03);
+  --dim-black-12: rgba(0, 0, 0, 0.12);
+  --dim-black-16: rgba(0, 0, 0, 0.16);
+  --dim-white-80: rgba(255, 255, 255, 0.92);
+  --color-success-bg: #F0FDF4;
+  --color-success-line: #BBF7D0;
+  --color-warn-bg: #FFFBEB;
+  --color-error-bg: #FEF2F2;
+  --color-info-bg: #EFF6FF;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  background: var(--color-gray-8); color: var(--color-gray-85);
+  height: 100vh; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+/* ── Header ── */
+.header {
+  background: var(--dim-white-80); border-bottom: 1px solid var(--color-gray-15);
+  padding: 11px 20px; display: flex; align-items: center;
+  gap: 10px; flex-shrink: 0; flex-wrap: wrap;
+  backdrop-filter: blur(10px);
+}
+.header-title { font-size: 15px; font-weight: 700; color: var(--color-gray-85); margin-right: 4px; }
+/* ── Body layout ── */
+.body { display: flex; flex: 1; overflow: hidden; }
+
+/* ── Left Panel ── */
+.left-panel {
+  width: 300px; background: var(--color-white); border-right: 1px solid var(--color-gray-15);
+  display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;
+}
+.panel-section { padding: 14px 14px; border-bottom: 1px solid var(--color-gray-10); }
+.section-label {
+  font-size: 10px; font-weight: 700; color: var(--color-gray-50);
+  text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px;
+}
+.input-field {
+  width: 100%; border: 1.5px solid var(--color-gray-15); border-radius: 8px;
+  padding: 10px 12px; font-size: 13px; font-family: inherit;
+  outline: none; color: var(--color-gray-85); transition: border-color 0.15s;
+  background: var(--color-white); min-height: 40px;
+}
+.input-field:focus { border-color: var(--color-system-blue); }
+.char-row { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+.char-count { font-size: 11px; color: var(--color-gray-50); }
+.char-count.over { color: var(--color-system-red); font-weight: 700; }
+.img-drop {
+  margin-top: 8px; border: 1.5px dashed var(--color-gray-30); border-radius: 8px;
+  padding: 10px; text-align: center; cursor: pointer; font-size: 11px;
+  color: var(--color-gray-50); transition: all 0.15s; user-select: none;
+}
+.img-drop:hover { border-color: var(--color-system-blue); color: var(--color-system-blue); background: var(--color-info-bg); }
+.img-drop.has-file { border-color: var(--color-olive-green-50); color: var(--color-olive-green-90); background: var(--color-success-bg); }
+.img-drop.required-error { border-color: var(--color-system-red); color: var(--color-system-red); background: var(--color-error-bg); }
+.img-drop input { display: none; }
+.btn-row { display: flex; gap: 6px; margin-top: 8px; }
+.btn {
+  padding: 7px 12px; border-radius: 7px; font-size: 13px;
+  font-weight: 600; cursor: pointer; border: none; font-family: inherit;
+  transition: background 0.12s;
+}
+.btn-primary { background: var(--color-system-blue); color: var(--color-white); flex: 1; }
+.btn-primary:hover { background: var(--color-system-blue); }
+.btn-ghost { background: var(--color-gray-10); color: var(--color-gray-70); }
+.btn-ghost:hover { background: var(--color-gray-15); }
+
+/* ── Filter bar ── */
+.filter-bar {
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--color-gray-10);
+}
+.list-section-title {
+  font-size: 11px; font-weight: 800; color: var(--color-gray-60);
+  letter-spacing: 0.4px;
+}
+
+/* ── Item list ── */
+.item-list { flex: 1; overflow-y: auto; padding: 6px 8px; }
+.list-row {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 7px; border-radius: 7px; cursor: pointer;
+  font-size: 12px; transition: background 0.1s;
+}
+.list-row:hover { background: var(--color-gray-10); }
+.list-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.list-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-gray-85); }
+.list-del {
+  background: none; border: none; cursor: pointer;
+  color: var(--color-gray-30); font-size: 13px; padding: 2px 4px;
+  line-height: 1; border-radius: 4px;
+}
+.list-del:hover { color: var(--color-system-red); background: var(--color-error-bg); }
+
+/* ── Main area ── */
+.main { flex: 1; overflow-y: auto; padding: 28px 40px; }
+.cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+/* ── Menu Card ── */
+.menu-card {
+  background: var(--color-white); border-radius: 12px;
+  border: 1px solid var(--color-gray-15); padding: 22px 24px;
+  box-shadow: 0 1px 2px var(--dim-black-3);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.menu-card:hover { border-color: var(--color-gray-30); box-shadow: 0 8px 22px var(--dim-black-12); }
+.card-head {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 10px;
+}
+.card-num { font-size: 11px; font-weight: 600; color: var(--color-gray-50); }
+.card-status-badge {
+  font-size: 11px; font-weight: 700; padding: 4px 9px;
+  border-radius: 999px;
+}
+.s-ok    { background: var(--color-success-bg); color: var(--color-olive-green-70); }
+.s-warn  { background: var(--color-warn-bg); color: var(--color-coral-orange); }
+.s-error { background: var(--color-error-bg); color: var(--color-system-red); }
+
+/* ── Component Preview (Figma-accurate) ── */
+.comp-preview {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+  padding: 8px 0 16px;
+}
+.comp-img-area {
+  width: 77px; height: 77px;
+  border-radius: 10px; background: var(--color-gray-8);
+  overflow: hidden; display: flex;
+  align-items: center; justify-content: center;
+  position: relative; flex-shrink: 0;
+}
+.comp-img-area img { width: 100%; height: 100%; object-fit: contain; }
+.comp-img-placeholder { font-size: 10px; color: var(--color-gray-40); text-align: center; line-height: 1.4; }
+.comp-img-area.img-error { outline: 2px solid var(--color-system-red); outline-offset: -2px; }
+.comp-label {
+  font-family: 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 12px; line-height: 16px; color: var(--color-gray-85);
+  letter-spacing: 0;
+  text-align: center; width: 77px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  letter-spacing: 0;
+}
+.comp-label.clipped { color: var(--color-system-red); }
+
+/* ── Divider ── */
+.card-divider { border: none; border-top: 1px solid var(--color-gray-10); margin: 16px 0 12px; }
+.section-mini-label {
+  font-size: 11px; font-weight: 700; color: var(--color-gray-60);
+  margin-bottom: 8px; display: flex; align-items: center; gap: 4px;
+  letter-spacing: 0.2px;
+}
+/* ── 카드 본문 2컬럼 (ASIS/TOBE 좌 | 검수리스트 우) ── */
+.card-body-cols {
+  display: flex; gap: 22px; align-items: flex-start; margin-top: 14px;
+}
+.card-body-left { flex-shrink: 0; width: 300px; }
+.card-body-right {
+  flex: 1; min-width: 0;
+  padding-left: 22px;
+  border-left: 1px solid var(--color-gray-10);
+}
+/* ── 검수 컬럼 (문구 | 이미지 좌우 배치) ── */
+.review-cols { display: flex; gap: 16px; align-items: flex-start; }
+.review-col  { flex: 1; min-width: 0; }
+.review-head { margin: 4px 0 14px; }
+.review-title { font-size: 20px; line-height: 1.3; font-weight: 800; color: var(--color-gray-85); }
+
+/* ── Validation badges ── */
+.v-list { display: flex; flex-direction: column; gap: 6px; }
+.v-item {
+  display: flex; align-items: flex-start; gap: 7px;
+  font-size: 12px; line-height: 1.45;
+  padding: 8px 10px; border-radius: 8px;
+}
+.v-ok    { background: var(--color-success-bg); color: var(--color-olive-green-90); }
+.v-warn  { background: var(--color-warn-bg); color: var(--color-coral-orange); }
+.v-error { background: var(--color-error-bg); color: var(--color-system-red); }
+.v-info  { background: var(--color-info-bg); color: var(--color-system-blue); }
+.v-icon  { font-size: 11px; flex-shrink: 0; margin-top: 0.5px; }
+
+/* ── Review preview ── */
+.sug-wrap {
+  background: var(--color-gray-8); border: 1px solid var(--color-gray-15);
+  border-radius: 12px; padding: 12px; margin-top: 4px;
+}
+.sug-inner { display: flex; align-items: stretch; gap: 8px; }
+.sug-col {
+  flex: 1; min-width: 0; border-radius: 10px; padding: 10px;
+  background: var(--color-white); border: 1px solid var(--color-gray-10);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.sug-col-title {
+  width: 100%; text-align: left; font-size: 10px; font-weight: 700;
+  color: var(--color-gray-50); letter-spacing: 0.5px; text-transform: uppercase;
+}
+.sug-arrow {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-gray-40); font-size: 13px; width: 16px; flex-shrink: 0;
+}
+.sug-img-wrap {
+  width: 77px; height: 77px; border-radius: 10px;
+  background: var(--color-gray-10); display: flex; align-items: center; justify-content: center;
+  overflow: hidden; border: 1px solid var(--color-gray-15);
+  position: relative; flex-shrink: 0;
+}
+.sug-img-wrap img { width: 100%; height: 100%; object-fit: contain; }
+.sug-img-wrap.is-tobe { background: var(--color-gray-8); }
+/* Dim overlay — shown when image needs review */
+.img-dim-overlay {
+  position: absolute; inset: 0; border-radius: 10px;
+  background: var(--dim-black-16);
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.img-overlay-badge {
+  font-size: 10px; font-weight: 700; white-space: nowrap;
+  padding: 3px 9px; border-radius: 999px;
+}
+.img-overlay-ok {
+  position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);
+  background: var(--color-success-bg); color: var(--color-olive-green-90);
+  font-size: 10px; font-weight: 700; white-space: nowrap;
+  padding: 2px 8px; border-radius: 999px; pointer-events: none;
+}
+.img-overlay-wait { background: var(--dim-white-80); color: var(--color-gray-80); }
+.sug-img-placeholder { font-size: 10px; color: var(--color-gray-50); text-align: center; line-height: 1.35; }
+.sug-comp-img {
+  width: 77px; height: 77px; border-radius: 10px;
+  background: var(--color-gray-10); display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--color-gray-40);
+}
+.sug-label-text {
+  font-family: 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 12px; line-height: 16px; color: var(--color-olive-green-90);
+  text-align: center; width: 77px;
+  word-break: keep-all; overflow-wrap: anywhere;
+  overflow: hidden; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.sug-chip {
+  max-width: 100%; padding: 3px 8px; border-radius: 6px;
+  font-size: 11px; line-height: 1.35; text-align: center;
+  word-break: keep-all; overflow-wrap: anywhere;
+}
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center; padding: 72px 20px;
+  background: var(--color-white); border: 1px solid var(--color-gray-15); border-radius: 10px;
+}
+.empty-icon { font-size: 42px; margin-bottom: 12px; }
+.empty-title { font-size: 18px; font-weight: 800; color: var(--color-gray-85); margin-bottom: 6px; }
+.empty-desc { font-size: 13px; color: var(--color-gray-50); line-height: 1.7; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-gray-20); border-radius: 2px; }
+
+/* ── Cleanse feature ── */
+.cleanse-section { margin-top: 12px; }
+.cleanse-btn {
+  width: 100%; padding: 9px; background: var(--color-gray-5);
+  color: var(--color-system-blue); border: 1px solid var(--color-gray-15);
+  border-radius: 8px; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: all 0.15s;
+}
+.cleanse-btn:hover:not(:disabled) { background: var(--color-gray-10); border-color: var(--color-gray-30); }
+.cleanse-btn:disabled { opacity: 0.6; cursor: wait; }
+.cleanse-error {
+  margin-top: 8px; background: var(--color-error-bg); border: 1px solid var(--color-system-red);
+  color: var(--color-system-red); border-radius: 8px; padding: 8px;
+  font-size: 11px; line-height: 1.5;
+}
+.ai-review-box {
+  margin-top: 10px; background: var(--color-info-bg); border: 1px solid var(--color-system-blue);
+  color: var(--color-system-blue); border-radius: 10px; padding: 12px;
+  font-size: 12px; line-height: 1.5;
+}
+.ai-review-actions { display: flex; gap: 6px; margin-top: 10px; }
+.ai-review-btn {
+  width: 100%; padding: 9px; background: var(--color-gray-5); color: var(--color-gray-80);
+  border: 1px solid var(--color-gray-30); border-radius: 8px;
+  font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+}
+.ai-review-btn:disabled { opacity: 0.6; cursor: wait; }
+.cleanse-result {
+  margin-top: 8px; background: var(--color-gray-5);
+  border: 1px solid var(--color-gray-15); border-radius: 10px; padding: 12px;
+}
+.cleanse-compare {
+  display: flex; align-items: flex-start; gap: 8px; justify-content: center;
+}
+.cleanse-side { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.cleanse-side-label { font-size: 10px; color: var(--color-gray-60); font-weight: 600; }
+.cleanse-arrow { font-size: 18px; color: var(--color-gray-50); align-self: center; padding-top: 14px; }
+.dl-btn {
+  display: block; width: 100%; margin-top: 10px; padding: 9px;
+  background: var(--color-system-blue); color: var(--color-white); border: none; border-radius: 8px;
+  font-size: 12px; font-weight: 600; cursor: pointer; text-align: center;
+  font-family: inherit; text-decoration: none; transition: background 0.12s;
+}
+.dl-btn:hover { background: var(--color-system-blue); }
+.checker-bg {
+  background-image: repeating-conic-gradient(var(--color-gray-15) 0% 25%, var(--color-white) 0% 50%);
+  background-size: 10px 10px;
+}
+
+@media (max-width: 900px) {
+  body { height: auto; min-height: 100vh; overflow: auto; }
+  .body { flex-direction: column; overflow: visible; }
+  .left-panel {
+    width: 100%; border-right: 0; border-bottom: 1px solid var(--color-gray-15);
+    max-height: none;
+  }
+  .item-list { max-height: 180px; }
+  .main { overflow: visible; padding: 18px 14px 28px; }
+  .cards-grid { width: 100%; }
+  .card-body-cols { flex-direction: column; }
+  .card-body-left { width: 100%; }
+  .card-body-right { padding-left: 0; border-left: none; border-top: 1px solid var(--color-gray-10); padding-top: 16px; margin-top: 4px; }
+  .sug-inner { flex-direction: column; }
+  .sug-arrow { width: 100%; transform: rotate(90deg); }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <span class="header-title">올리브베러 중카테고리 메뉴명, 이미지 검수</span>
+</div>
+
+<div class="body">
+
+  <!-- Left Panel -->
+  <div class="left-panel">
+    <div class="panel-section">
+      <div class="section-label">항목 추가</div>
+
+      <input type="text" class="input-field" id="text-input"
+        placeholder="메뉴명 입력 (최대 12자)" maxlength="20">
+      <div class="char-row">
+        <div class="char-count" id="char-count">0 / 12</div>
+        <div style="font-size:11px;color:var(--color-gray-50)">BO 입력 제한</div>
+      </div>
+
+      <div class="img-drop" id="img-drop" onclick="document.getElementById('img-input').click()">
+        <input type="file" id="img-input" accept="image/png,image/jpeg,image/webp">
+        <div id="img-drop-label">이미지 업로드 <span style="color:var(--color-system-red);font-weight:700">(필수)</span></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="addItem()">추가하기</button>
+        <button class="btn btn-ghost" onclick="clearPending()" title="초기화">↺</button>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="section-label">AI 이미지 클렌징</div>
+
+      <!-- remove.bg key (권장: 오브제 제거 + 패키지 보존) -->
+      <div style="font-size:10px;font-weight:700;color:var(--color-olive-green-90);margin-bottom:5px;display:flex;align-items:center;gap:4px">
+        <span style="background:var(--color-success-bg);color:var(--color-olive-green-90);padding:1px 6px;border-radius:999px;font-size:9px;font-weight:800">권장</span>
+        remove.bg
+      </div>
+      <input type="password" class="input-field" id="removebg-key"
+        placeholder="remove.bg API 키 입력" autocomplete="off"
+        oninput="updateKeyStatus()" style="margin-bottom:4px">
+      <div style="font-size:10px;color:var(--color-gray-50);line-height:1.5;margin-bottom:10px">
+        오브제·소품 제거 + 패키지 색상 100% 보존<br>
+        <a href="https://www.remove.bg/api" target="_blank" style="color:var(--color-olive-green-90);text-decoration:none">무료 키 발급 (월 50장) →</a>
+      </div>
+
+      <!-- Gemini key (손·오브제 AI 제거용) -->
+      <div style="font-size:10px;font-weight:700;color:var(--color-gray-60);margin-bottom:5px">Gemini (손·오브제 AI 제거용)</div>
+      <input type="password" class="input-field" id="gemini-key"
+        placeholder="Gemini API 키 입력" autocomplete="off"
+        oninput="updateKeyStatus()">
+      <div id="key-status" style="font-size:10px;color:var(--color-gray-50);margin-top:5px;line-height:1.5">
+        <a href="https://aistudio.google.com/apikey" target="_blank"
+          style="color:var(--color-system-blue);text-decoration:none">Gemini API 키 발급 →</a>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="list-section-title">검수 목록</div>
+    </div>
+
+    <div class="item-list" id="item-list"></div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="cards-grid" id="cards-grid">
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">검수할 항목이 없어요</div>
+        <div class="empty-desc">왼쪽 패널에서 메뉴명을 입력하고<br>이미지를 업로드해 검수를 시작하세요</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────────
+let items = [];
+let nextId = 1;
+let pendingImg = null; // { dataUrl, name, valid }
+
+const IMAGE_REVIEW_RULES = [
+  '상품 외부 배경이 완전히 투명한 PNG인가',
+  '손/팔/모델/소품/증정품/추가 상품/장식 오브제가 모두 제거되었는가',
+  '여러 옵션 나열 시 주요 옵션 1개만 남겨져 있는가',
+  '가려진 상품이 동일 패키지 형태로 자연스럽게 복원되었는가',
+  '상품이 캔버스 정중앙에 배치되어 있는가',
+  '캔버스가 정사각형인가',
+  '상품이 308×308px 기준 200×200px 안전영역 안에 위치하는가 (너무 크거나 작지 않은가)',
+  '상품 내부 패키지·라벨·텍스트·로고·색상·질감이 원본과 동일하게 유지되었는가',
+  '상품 외부 그림자·반사광·바닥면이 제거되었는가',
+  '제품 구도가 정면샷에 가까운가 (명확한 측면/후면/과도한 사선 각도만 문제)'
+];
+const OUTPUT_SIZE = 308;
+const OUTPUT_PADDING = 54; // 200px safety area in 308px output
+
+const IMAGE_REQUIRED_ISSUE = { k: 'error', m: '이미지 미첨부 — 이미지 업로드는 필수입니다' };
+
+// ── DOM 기반 텍스트 측정 (Canvas보다 정확 — 실제 브라우저 폰트 렌더링 사용) ───
+const MAX_W = 77;
+let _measureEl = null;
+function domWidth(text) {
+  if (!_measureEl) {
+    _measureEl = document.createElement('span');
+    _measureEl.style.cssText =
+      "position:fixed;top:-9999px;left:-9999px;visibility:hidden;white-space:nowrap;" +
+      "font-family:'Apple SD Gothic Neo',-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif;" +
+      "font-size:12px;line-height:16px;letter-spacing:0;";
+    document.body.appendChild(_measureEl);
+  }
+  _measureEl.textContent = text;
+  return _measureEl.getBoundingClientRect().width;
+}
+
+// word-break: keep-all + overflow-wrap: anywhere 시뮬레이션
+// 줄나눔 우선순위: ① 띄어쓰기 ② '/' '·' 뒤 ③ 위 두 경우로 안 끊기면 글자 단위(overflow-wrap)
+function countLines(text, maxWidth) {
+  let total = 0;
+  for (const seg of text.split('\n')) {
+    if (!seg) { total++; continue; }
+
+    // 토크나이즈: 띄어쓰기 → 단어 분리, '/'·'·' → 해당 문자 뒤에서 분리
+    const tokens = []; // { str, spBefore }
+    seg.split(' ').forEach((word, wi) => {
+      if (!word) return;
+      let chunk = '', firstChunk = true;
+      for (const ch of word) {
+        chunk += ch;
+        if (ch === '/' || ch === '·') {
+          tokens.push({ str: chunk, spBefore: firstChunk && wi > 0 });
+          firstChunk = false; chunk = '';
+        }
+      }
+      if (chunk) tokens.push({ str: chunk, spBefore: firstChunk && wi > 0 });
+    });
+
+    const spW = domWidth(' ');
+    let lw = 0, lc = 1;
+
+    for (const { str, spBefore } of tokens) {
+      const tw = domWidth(str);
+      const gap = (lw > 0 && spBefore) ? spW : 0;
+
+      if (lw + gap + tw <= maxWidth + 0.3) {
+        // 현재 줄에 붙이기
+        lw += (lw > 0 ? gap : 0) + tw;
+      } else if (tw <= maxWidth) {
+        // 다음 줄로 이동 (토큰 자체는 한 줄에 들어감)
+        lc++; lw = tw;
+      } else {
+        // 토큰이 maxWidth 초과 → overflow-wrap: anywhere (글자 단위 분리)
+        for (const ch of str) {
+          const cw = domWidth(ch);
+          if (lw + cw > maxWidth + 0.3 && lw > 0) { lc++; lw = cw; }
+          else lw += cw;
+        }
+      }
+    }
+    total += lc;
+  }
+  return total;
+}
+
+// ── Text validation ────────────────────────────────────────
+function validateText(rawText) {
+  const text = rawText.trim();
+  const len = text.length;
+  const issues = [];
+
+  // 1. Char count
+  if (len > 12) {
+    issues.push({ k: 'error', m: `글자수 초과 (${len}자 / 최대 12자 입력 가능)` });
+  } else {
+    issues.push({ k: 'ok', m: `글자수 정상 (${len} / 12자)` });
+  }
+
+  // 2. Slash → dot recommendation (미리보기는 renderCard에서 별도 표시)
+  const hasSlash = text.includes('/');
+  if (hasSlash) {
+    issues.push({ k: 'warn', m: `'/' 표기 — '·'(가운뎃점) 대체를 권장합니다` });
+  }
+
+  // 3. Line clamp check
+  const linesRaw = countLines(text, MAX_W);
+  const clipped  = linesRaw > 2;
+
+  if (clipped) {
+    issues.push({ k: 'error', m: `말줄임 발생 — 문구를 줄여주세요 (현재 ${len}자)` });
+  } else {
+    issues.push({ k: 'ok', m: `줄수 정상 (${linesRaw}줄 / 최대 2줄)` });
+  }
+
+  return { issues, linesRaw, clipped, hasSlash };
+}
+
+// ── Image canvas helpers ───────────────────────────────────
+function getPixel(d, w, x, y) {
+  const i = (y * w + x) * 4;
+  return [d[i], d[i+1], d[i+2], d[i+3]];
+}
+
+function getContentBBox(d, w, h, alphaThresh) {
+  const thr = alphaThresh ?? 20;
+  let minX = w, maxX = -1, minY = h, maxY = -1;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (d[(y * w + x) * 4 + 3] > thr) {
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+      }
+    }
+  }
+  return maxX < 0 ? null : { minX, maxX, minY, maxY };
+}
+
+function getMimeFromDataUrl(dataUrl) {
+  const sep = dataUrl.indexOf(',');
+  const mimeMatch = dataUrl.slice(0, sep).match(/:(.*?);/);
+  return mimeMatch ? mimeMatch[1].toLowerCase() : '';
+}
+
+function removeArtificialEdgeBackground(d, w, h) {
+  function isArtificialBg(idx) {
+    const pi = idx * 4, a = d[pi + 3];
+    if (a < 15) return true;
+    const r = d[pi], g = d[pi + 1], b = d[pi + 2];
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    const sat = max === 0 ? 0 : (max - min) / max;
+    const brightNeutral = max > 185 && sat < 0.18; // 흰색/연회색 체크무늬
+    const darkNeutral = max < 55 && sat < 0.28;    // 검정/진회색 배경
+    return a > 10 && (brightNeutral || darkNeutral);
+  }
+  const visited = new Uint8Array(w * h);
+  const queue = [];
+  function push(x, y) {
+    const idx = y * w + x;
+    if (!visited[idx]) {
+      visited[idx] = 1;
+      if (isArtificialBg(idx)) queue.push(idx);
+    }
+  }
+  for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); }
+  for (let y = 1; y < h - 1; y++) { push(0, y); push(w - 1, y); }
+  while (queue.length) {
+    const idx = queue.pop();
+    d[idx * 4 + 3] = 0;
+    const x = idx % w, y = (idx / w) | 0;
+    if (x > 0) push(x - 1, y);
+    if (x < w - 1) push(x + 1, y);
+    if (y > 0) push(x, y - 1);
+    if (y < h - 1) push(x, y + 1);
+  }
+}
+
+async function normalizeProductPng(srcDataUrl, options = {}) {
+  const output = options.output || OUTPUT_SIZE;
+  const pad = options.pad || OUTPUT_PADDING;
+  const forceOpaqueContent = options.forceOpaqueContent ?? false;
+  const removeCheckerboard = options.removeCheckerboard ?? true;
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const sw = img.naturalWidth, sh = img.naturalHeight;
+      const srcCvs = document.createElement('canvas');
+      srcCvs.width = sw; srcCvs.height = sh;
+      const srcCtx = srcCvs.getContext('2d', { willReadFrequently: true });
+      srcCtx.clearRect(0, 0, sw, sh);
+      srcCtx.drawImage(img, 0, 0);
+      const imgData = srcCtx.getImageData(0, 0, sw, sh);
+      const d = imgData.data;
+
+      if (removeCheckerboard) {
+        removeArtificialEdgeBackground(d, sw, sh);
+      }
+
+      if (forceOpaqueContent) {
+        for (let i = 3; i < d.length; i += 4) {
+          if (d[i] > 8) d[i] = 255;
+        }
+        srcCtx.putImageData(imgData, 0, 0);
+      }
+
+      const bbox = getContentBBox(d, sw, sh, 8);
+      if (!bbox) { reject(new Error('내용물을 찾을 수 없습니다')); return; }
+
+      const contentW = bbox.maxX - bbox.minX + 1;
+      const contentH = bbox.maxY - bbox.minY + 1;
+      const maxSlot  = output - pad * 2;
+      const scale    = Math.min(maxSlot / contentW, maxSlot / contentH);
+      const drawW    = Math.round(contentW * scale);
+      const drawH    = Math.round(contentH * scale);
+      const drawX    = Math.round((output - drawW) / 2);
+      const drawY    = Math.round((output - drawH) / 2);
+
+      const outCvs = document.createElement('canvas');
+      outCvs.width = output; outCvs.height = output;
+      const outCtx = outCvs.getContext('2d');
+      outCtx.imageSmoothingEnabled = true;
+      outCtx.imageSmoothingQuality = 'high';
+      outCtx.clearRect(0, 0, output, output);
+      outCtx.drawImage(srcCvs, bbox.minX, bbox.minY, contentW, contentH, drawX, drawY, drawW, drawH);
+
+      resolve({ dataUrl: outCvs.toDataURL('image/png'), w: output, h: output });
+    };
+    img.onerror = () => reject(new Error('이미지 로드 실패'));
+    img.src = srcDataUrl;
+  });
+}
+
+// Edge-seeded flood fill: makes background-colored pixels transparent
+function floodFillTransparent(d, w, h, bgColor) {
+  const [br, bg, bb] = bgColor;
+  const tol = 45;
+  function matches(idx) {
+    const pi = idx * 4, a = d[pi + 3];
+    if (a < 15) return true; // already transparent
+    return (
+      Math.abs(d[pi]   - br) < tol &&
+      Math.abs(d[pi+1] - bg) < tol &&
+      Math.abs(d[pi+2] - bb) < tol
+    );
+  }
+  const visited = new Uint8Array(w * h);
+  const queue = [];
+  function push(x, y) {
+    const idx = y * w + x;
+    if (!visited[idx]) { visited[idx] = 1; if (matches(idx)) queue.push(idx); }
+  }
+  for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); }
+  for (let y = 1; y < h - 1; y++) { push(0, y); push(w - 1, y); }
+  while (queue.length) {
+    const idx = queue.pop();
+    d[idx * 4 + 3] = 0;
+    const x = idx % w, y = (idx / w) | 0;
+    if (x > 0)     push(x - 1, y);
+    if (x < w - 1) push(x + 1, y);
+    if (y > 0)     push(x, y - 1);
+    if (y < h - 1) push(x, y + 1);
+  }
+}
+
+// ── Image validation (9개 공식 요건 기준) ─────────────────
+async function validateImage(dataUrl) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const w = img.naturalWidth, h = img.naturalHeight;
+      const issues = [];
+      const mimeType = getMimeFromDataUrl(dataUrl);
+
+      // ── 로컬 자동 검사 가능 항목 ──────────────────────────
+
+      // 요건 1: 배경은 완전히 투명한 PNG
+      if (mimeType !== 'image/png') {
+        issues.push({ k: 'error', r: 1, m: 'PNG 형식이 아님 — 투명 배경 PNG로 변환 필요' });
+      }
+
+      // 요건 6: 최종 캔버스는 정사각형
+      const sq = w === h;
+      const wOk = w % 77 === 0, hOk = h % 77 === 0;
+      if (!sq) {
+        issues.push({ k: 'error', r: 6, m: `정사각형 아님 (현재 ${w}×${h}px)` });
+      } else if (!wOk || !hOk) {
+        issues.push({ k: 'warn', r: 6, m: `77의 배수 권장 — 77, 154, 231, 308px 등` });
+      } else {
+        issues.push({ k: 'ok', r: 6, m: `정사각형 정상 (${w}×${h}px)` });
+      }
+
+      try {
+        const cvs = document.createElement('canvas');
+        cvs.width = w; cvs.height = h;
+        const ctx = cvs.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const imgData = ctx.getImageData(0, 0, w, h);
+        const d = imgData.data;
+
+        // 요건 1 (계속): 투명 배경 여부
+        const step = Math.max(1, Math.floor(d.length / (300 * 4))) * 4;
+        let hasTransparency = false;
+        for (let i = 3; i < d.length; i += step) {
+          if (d[i] < 240) { hasTransparency = true; break; }
+        }
+        const eStep = Math.max(1, Math.floor(Math.min(w, h) / 40));
+        let opaqueEdge = 0, coloredEdge = 0;
+        function checkEdge(x, y) {
+          const [r, g, b, a] = getPixel(d, w, x, y);
+          if (a > 30) {
+            opaqueEdge++;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            const sat = max === 0 ? 0 : (max - min) / max;
+            if (sat > 0.18 || max < 200) coloredEdge++;
+          }
+        }
+        for (let x = 0; x < w; x += eStep) { checkEdge(x, 0); checkEdge(x, h - 1); }
+        for (let y = eStep; y < h - eStep; y += eStep) { checkEdge(0, y); checkEdge(w - 1, y); }
+        const hasColoredBg = opaqueEdge > 0 && coloredEdge > opaqueEdge * 0.08;
+
+        if (mimeType === 'image/png') {
+          if (!hasTransparency && hasColoredBg) {
+            issues.push({ k: 'error', r: 1, m: '유색 배경 — AI 클렌징으로 제거 가능' });
+          } else if (!hasTransparency) {
+            issues.push({ k: 'error', r: 1, m: '불투명 배경 — AI 클렌징으로 제거 가능' });
+          } else {
+            issues.push({ k: 'ok', r: 1, m: '투명 배경 PNG ✓' });
+          }
+        }
+
+        const bbox = getContentBBox(d, w, h);
+
+        // 요건 7: 여백 14px 이상 (77px 기준)
+        if (bbox) {
+          const scale = 77 / w;
+          const padTop    = Math.round(bbox.minY * scale);
+          const padBottom = Math.round((h - 1 - bbox.maxY) * scale);
+          const padLeft   = Math.round(bbox.minX * scale);
+          const padRight  = Math.round((w - 1 - bbox.maxX) * scale);
+          const minPad    = Math.min(padTop, padBottom, padLeft, padRight);
+          if (minPad < 13.5) {
+            issues.push({ k: 'error', r: 7, m: `여백 부족 (최소 ${minPad}px / 권장 13.5px) — AI 클렌징으로 보정 가능` });
+          } else {
+            issues.push({ k: 'ok', r: 7, m: `여백 충분 (최소 ${minPad}px / 권장 13.5px) ✓` });
+          }
+
+          // 요건 5: 제품 정중앙 배치
+          const cxOff = Math.abs(((bbox.minX + bbox.maxX) / 2) - w / 2) / w * 77;
+          const cyOff = Math.abs(((bbox.minY + bbox.maxY) / 2) - h / 2) / h * 77;
+          if (cxOff > 5 || cyOff > 5) {
+            issues.push({ k: 'warn', r: 5, m: `제품 치우침 (수평 ${Math.round(cxOff)}px / 수직 ${Math.round(cyOff)}px 오프셋) — AI 클렌징으로 정렬 가능` });
+          } else {
+            issues.push({ k: 'ok', r: 5, m: '제품 정중앙 배치 ✓' });
+          }
+        } else {
+          issues.push({ k: 'warn', r: 7, m: '콘텐츠를 찾을 수 없어 여백 측정 불가' });
+        }
+
+        // 요건 3: 복수 제품 여부 (투명 간격 heuristic)
+        if (bbox) {
+          const cW = bbox.maxX - bbox.minX + 1, cH = bbox.maxY - bbox.minY + 1;
+          let vGap = false, hGap = false;
+          const xMid0 = bbox.minX + Math.floor(cW * 0.25), xMid1 = bbox.minX + Math.floor(cW * 0.75);
+          outer: for (let x = xMid0; x <= xMid1; x++) {
+            let allEmpty = true;
+            for (let y = bbox.minY; y <= bbox.maxY; y++) {
+              if (d[(y * w + x) * 4 + 3] > 20) { allEmpty = false; break; }
+            }
+            if (allEmpty) { vGap = true; break outer; }
+          }
+          const yMid0 = bbox.minY + Math.floor(cH * 0.25), yMid1 = bbox.minY + Math.floor(cH * 0.75);
+          outer2: for (let y = yMid0; y <= yMid1; y++) {
+            let allEmpty = true;
+            for (let x = bbox.minX; x <= bbox.maxX; x++) {
+              if (d[(y * w + x) * 4 + 3] > 20) { allEmpty = false; break; }
+            }
+            if (allEmpty) { hGap = true; break outer2; }
+          }
+          if (vGap || hGap) {
+            issues.push({ k: 'error', r: 3, m: '복수 제품 의심 — 주요 옵션 1개만 남겨야 합니다' });
+          } else {
+            issues.push({ k: 'ok', r: 3, m: '단일 제품으로 보임 ✓' });
+          }
+        }
+
+        // 요건 순서대로 정렬
+        issues.sort((a, b) => (a.r || 99) - (b.r || 99));
+
+        resolve({ issues, w, h, hasColoredBg, hasTransparency });
+      } catch(e) {
+        issues.push({ k: 'warn', m: '자동 분석 불가 — 직접 확인 필요' });
+        resolve({ issues, w, h });
+      }
+    };
+    img.onerror = () => resolve({ issues: [{ k: 'error', m: '이미지 로드 실패' }], w: 0, h: 0 });
+    img.src = dataUrl;
+  });
+}
+
+// ── Key status indicator ───────────────────────────────────
+function updateKeyStatus() {
+  const geminiKey  = document.getElementById('gemini-key')?.value?.trim();
+  const removebgKey = document.getElementById('removebg-key')?.value?.trim();
+  const el = document.getElementById('key-status');
+  if (!el) return;
+  const parts = [];
+  if (removebgKey && removebgKey.length > 10) parts.push('<span style="color:var(--color-olive-green-90);font-weight:700">✓ remove.bg 활성화</span>');
+  if (geminiKey   && geminiKey.length   > 10) parts.push('<span style="color:var(--color-system-blue);font-weight:700">✓ Gemini 활성화</span>');
+  el.innerHTML = parts.length
+    ? parts.join(' &nbsp;·&nbsp; ')
+    : '<a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--color-system-blue);text-decoration:none">Gemini 키 발급 →</a>';
+  render(); // 버튼 UI 동적 업데이트
+}
+
+function extractJson(text) {
+  const trimmed = String(text || '').trim();
+  try { return JSON.parse(trimmed); } catch(_) {}
+  const match = trimmed.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('AI 검수 결과를 JSON으로 해석하지 못했습니다');
+  return JSON.parse(match[0]);
+}
+
+// ── Gemini API 이미지 검수 ─────────────────────────────────
+async function reviewImageWithGemini(dataUrl, apiKey) {
+  const sep      = dataUrl.indexOf(',');
+  const b64      = dataUrl.slice(sep + 1);
+  const mimeType = getMimeFromDataUrl(dataUrl) || 'image/png';
+  const endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+  const prompt = [
+    '당신은 커머스 중카테고리 제품 썸네일 QA 담당자입니다.',
+    '이미지를 보고 아래 10개 규칙을 검수하세요.',
+    ...IMAGE_REVIEW_RULES.map((rule, idx) => `${idx + 1}. ${rule}`),
+    '정면 구도 판정 기준: 제품 전면 라벨/로고/주요 텍스트가 보이고, 제품이 정면을 향해 있으면 ok입니다.',
+    '작은 원근감, 제품 두께감, 패키지 옆면이 살짝 보이는 정도는 정상 상품 컷으로 보고 ok 처리하세요.',
+    '정면 구도는 명확한 측면샷, 후면샷, 전면 텍스트를 읽기 어려울 정도의 과도한 사선일 때만 warn 또는 error로 표시하세요.',
+    '확실하지 않은 정면 구도는 warn이 아니라 ok로 둡니다.',
+    '반드시 JSON만 반환하세요. 형식:',
+    '{"overall":"ok|warn|error","checks":[{"rule":1,"status":"ok|warn|error","message":"짧은 한국어 판정"}],"summary":"짧은 한국어 요약"}',
+    '손/오브제/배경/그림자처럼 명확히 보이는 문제만 warn 또는 error로 표시하세요.'
+  ].join('\n');
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey
+    },
+    body: JSON.stringify({
+      contents: [{
+        parts: [
+          { text: prompt },
+          { inline_data: { mime_type: mimeType, data: b64 } }
+        ]
+      }],
+      generationConfig: { responseMimeType: 'application/json' }
+    })
+  });
+
+  if (!res.ok) {
+    let errMsg = `AI 검수 API 오류 (${res.status})`;
+    try {
+      const e = await res.json();
+      errMsg = e.error?.message || errMsg;
+    } catch(_) {}
+    throw new Error(errMsg);
+  }
+
+  const result = await res.json();
+  const text = result.candidates?.[0]?.content?.parts?.find(p => p.text)?.text;
+  const parsed = extractJson(text);
+  const checks = Array.isArray(parsed.checks) ? parsed.checks : [];
+  return {
+    overall: parsed.overall || (checks.some(c => c.status === 'error') ? 'error' : checks.some(c => c.status === 'warn') ? 'warn' : 'ok'),
+    summary: parsed.summary || '',
+    checks: checks.map(c => ({
+      rule: c.rule,
+      status: ['ok', 'warn', 'error'].includes(c.status) ? c.status : 'warn',
+      message: c.message || `규칙 ${c.rule} 검수 필요`
+    }))
+  };
+}
+
+async function runAiImageReview(itemId) {
+  const item = items.find(i => i.id === itemId);
+  if (!item || !item.img) return;
+  const apiKey = document.getElementById('gemini-key')?.value?.trim();
+  if (!apiKey || apiKey.length <= 10) {
+    item.aiReview = { error: 'Gemini API 키를 입력하면 의미 기반 이미지 검수를 실행할 수 있습니다' };
+    render();
+    return;
+  }
+  item.aiReview = 'loading';
+  render();
+  try {
+    item.aiReview = await reviewImageWithGemini(item.img.dataUrl, apiKey);
+  } catch(e) {
+    item.aiReview = { error: e.message || String(e) };
+  }
+  render();
+}
+
+// ── remove.bg API 클렌징 (권장: 오브제 제거 + 패키지 보존) ──────────────
+async function cleanseWithRemoveBg(dataUrl, apiKey) {
+  const sep = dataUrl.indexOf(',');
+  const b64 = dataUrl.slice(sep + 1);
+
+  const formData = new FormData();
+  formData.append('image_file_b64', b64);
+  formData.append('type', 'product');   // product 모드: 메인 제품만 남기고 오브제 제거
+  formData.append('size', 'auto');
+
+  const res = await fetch('https://api.remove.bg/v1.0/removebg', {
+    method: 'POST',
+    headers: { 'X-Api-Key': apiKey },
+    body: formData
+  });
+
+  if (!res.ok) {
+    let errMsg = `remove.bg 오류 (${res.status})`;
+    try {
+      const errJson = await res.json();
+      errMsg = errJson.errors?.[0]?.title || errMsg;
+    } catch(_) {}
+    throw new Error(errMsg);
+  }
+
+  const blob = await res.blob();
+  const rawDataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.onerror = () => reject(new Error('이미지 변환 실패'));
+    reader.readAsDataURL(blob);
+  });
+
+  // 실제 알파 PNG로 나오므로 바로 정규화
+  const normalized = await normalizeProductPng(rawDataUrl, {
+    removeCheckerboard: false,
+    forceOpaqueContent: false,
+    pad: OUTPUT_PADDING
+  });
+  normalized.aiCleansed = true;
+  normalized.valid = await validateImage(normalized.dataUrl);
+  return normalized;
+}
+
+// ── Gemini 손·오브제 제거 (배경 제거 후 적용하는 보조 단계) ──────────────
+async function removeObjectsWithGemini(dataUrl, apiKey) {
+  const sep = dataUrl.indexOf(',');
+  const b64 = dataUrl.slice(sep + 1);
+  const mimeType = getMimeFromDataUrl(dataUrl) || 'image/png';
+  const endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent';
+
+  const prompt = `이 제품 이미지에서 방해 요소만 제거하는 작업입니다.
+
+━━ 제거 대상 (이것만) ━━
+- 사람의 손, 팔, 신체 부위
+- 모델, 사람
+- 소품, 촬영 도구, 접시, 쟁반, 포장지
+- 증정품, 추가 제품 (주요 제품 아닌 것)
+- 장식 오브제 (나뭇잎, 꽃, 돌 등 제품과 무관한 물체)
+
+━━ 절대 변경 금지 ━━
+- 제품 패키지 자체 (색상, 텍스트, 로고, 일러스트, 형태 모두)
+- 이미 투명 처리된 배경 영역 → 그대로 투명 유지
+- 제품의 전체 실루엣과 크기
+
+━━ 가려진 부분 복원 ━━
+손·소품으로 가려진 제품 부분이 있다면 동일 패키지 색상·패턴으로 자연스럽게 복원하세요.
+단, 텍스트·로고는 원본에 있는 것만 복원하고 임의 생성 금지.
+
+━━ 출력 ━━
+- PNG, 실제 알파 채널 투명 배경 (체크무늬 절대 금지)
+- 제품 정중앙 배치, 상하좌우 여백 균등`;
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+    body: JSON.stringify({
+      contents: [{ parts: [
+        { text: prompt },
+        { inline_data: { mime_type: mimeType, data: b64 } }
+      ]}],
+      generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+    })
+  });
+  if (!res.ok) {
+    let e = `API 오류 (${res.status})`;
+    try { const j = await res.json(); e = j.error?.message || e; } catch(_) {}
+    throw new Error(e);
+  }
+  const result = await res.json();
+  const parts  = result.candidates?.[0]?.content?.parts ?? [];
+  const imgPart = parts.find(p => p.inlineData || p.inline_data);
+  if (!imgPart) throw new Error(parts.find(p => p.text)?.text || 'AI가 이미지를 반환하지 않았습니다');
+  const iData = imgPart.inlineData || imgPart.inline_data;
+  const outDataUrl = `data:${iData.mimeType || iData.mime_type || 'image/png'};base64,${iData.data}`;
+
+  const normalized = await normalizeProductPng(outDataUrl, {
+    removeCheckerboard: false, forceOpaqueContent: false, pad: OUTPUT_PADDING
+  });
+  normalized.aiCleansed = true;
+  normalized.valid = await validateImage(normalized.dataUrl);
+  return normalized;
+}
+
+async function runObjectRemoval(itemId) {
+  const item = items.find(i => i.id === itemId);
+  if (!item) return;
+  const geminiKey = document.getElementById('gemini-key')?.value?.trim();
+  if (!geminiKey || geminiKey.length <= 10) {
+    item.cleanError = 'Gemini API 키를 입력해주세요';
+    render(); return;
+  }
+  // 이미 클렌징된 이미지 있으면 그걸 입력으로, 없으면 원본 사용
+  const srcDataUrl = item.cleanData?.dataUrl || item.img?.dataUrl;
+  if (!srcDataUrl) return;
+  item.cleanData  = 'loading';
+  item.loadingMsg = '✋ 손·오브제 제거 중...';
+  item.cleanError = null;
+  render();
+  try {
+    item.cleanData = await removeObjectsWithGemini(srcDataUrl, geminiKey);
+    item.cleanMode = 'object-removal';
+  } catch(e) {
+    item.cleanData  = null;
+    item.cleanError = e.message || String(e);
+  }
+  item.loadingMsg = null;
+  render();
+}
+
+// ── Gemini 각도 보정 (배경 제거 후 투명 PNG에 적용) ──────────────────────
+async function correctAngleWithGemini(dataUrl, apiKey) {
+  const sep      = dataUrl.indexOf(',');
+  const b64      = dataUrl.slice(sep + 1);
+  const mimeType = getMimeFromDataUrl(dataUrl) || 'image/png';
+  const endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent';
+
+  const prompt = `이미 배경이 제거된 제품 투명 PNG 이미지입니다. 제품 구도를 정면샷으로 보정하는 작업입니다.
+
+━━ 이 작업의 목적 ━━
+투명 배경은 이미 제거되어 있습니다. 제품 각도·구도만 보정하세요.
+배경 제거 작업을 다시 하지 마세요 — 투명 영역은 그대로 유지하세요.
+
+━━ 보정 내용 ━━
+- 과도한 사선 각도로 찍힌 경우 → 정면 구도로 교정
+- 측면이 많이 보이는 경우 → 정면 중심으로 조정
+- 이미 정면샷이라면 그대로 유지
+
+━━ 절대 변경 금지 ━━
+- 패키지의 모든 색상, 텍스트, 로고, 일러스트
+- 투명 배경 영역 (배경 새로 생성하거나 색상 채우기 금지)
+
+━━ 배치 & 출력 ━━
+- 308×308px 캔버스, 제품을 200×200px 안전영역 안에 정중앙 배치
+- PNG, 실제 알파 채널 투명 배경 (체크무늬 절대 금지)
+- 그림자·바닥면·배경색 생성 금지`;
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+    body: JSON.stringify({
+      contents: [{ parts: [
+        { text: prompt },
+        { inline_data: { mime_type: mimeType, data: b64 } }
+      ]}],
+      generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+    })
+  });
+
+  if (!res.ok) {
+    let errMsg = `각도 보정 API 오류 (${res.status})`;
+    try { const e = await res.json(); errMsg = e.error?.message || errMsg; } catch(_) {}
+    throw new Error(errMsg);
+  }
+
+  const result = await res.json();
+  const parts  = result.candidates?.[0]?.content?.parts ?? [];
+  const imgPart = parts.find(p => p.inlineData || p.inline_data);
+  if (!imgPart) {
+    const textPart = parts.find(p => p.text);
+    throw new Error(textPart?.text || 'AI가 이미지를 반환하지 않았습니다');
+  }
+  const iData = imgPart.inlineData || imgPart.inline_data;
+  const outDataUrl = `data:${iData.mimeType || iData.mime_type || 'image/png'};base64,${iData.data}`;
+
+  // 각도 보정 후 정규화
+  const normalized = await normalizeProductPng(outDataUrl, {
+    removeCheckerboard: false,
+    forceOpaqueContent: false,
+    pad: OUTPUT_PADDING
+  });
+  normalized.aiCleansed = true;
+  normalized.valid = await validateImage(normalized.dataUrl);
+  return normalized;
+}
+
+async function runAngleCorrection(itemId) {
+  const item = items.find(i => i.id === itemId);
+  if (!item || !item.cleanData?.dataUrl) return;
+  const geminiKey = document.getElementById('gemini-key')?.value?.trim();
+  if (!geminiKey || geminiKey.length <= 10) {
+    item.cleanError = '각도 보정은 Gemini API 키가 필요해요';
+    render(); return;
+  }
+  item.angleLoading = true;
+  item.cleanError = null;
+  render();
+  try {
+    const result = await correctAngleWithGemini(item.cleanData.dataUrl, geminiKey);
+    item.cleanData = result;
+    item.cleanMode = 'angle-corrected';
+  } catch(e) {
+    item.cleanError = e.message || String(e);
+  }
+  item.angleLoading = false;
+  render();
+}
+
+// ── Gemini (나노바나나) API 클렌징 ────────────────────────
+async function cleanseWithGemini(dataUrl, apiKey, generative = false) {
+  const sep        = dataUrl.indexOf(',');
+  const b64        = dataUrl.slice(sep + 1);
+  const mimeType   = getMimeFromDataUrl(dataUrl) || 'image/png';
+
+  const endpoint =
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent';
+
+  // ── 생성형 재합성 프롬프트 (패키지 배경색이 날아갈 때 사용) ────────────
+  const generativePrompt = `이 제품 사진을 투명 배경 PNG로 변환하세요.
+
+━━ 목표 ━━
+제품의 형태와 전체적인 디자인을 참고해 깔끔한 제품 이미지를 생성합니다.
+세부 픽셀을 정확히 복사하기보다 자연스럽고 깔끔한 결과물이 우선입니다.
+
+━━ 반드시 유지 ━━
+- 제품 전체 실루엣과 형태
+- 패키지 주요 색상 (초록이면 초록, 흰색이면 흰색 등)
+- 제품명 / 브랜드명 (가능한 범위에서)
+- 전반적인 디자인 컨셉과 레이아웃
+
+━━ 자유롭게 재생성 가능 ━━
+- 패키지 배경색, 질감, 그라데이션
+- 손·소품으로 가려진 부분
+- 일부 세부 텍스트나 소형 일러스트
+
+━━ 제거 대상 ━━
+- 스튜디오 배경지, 테이블, 바닥, 천
+- 제품 외부 그림자·반사광·바닥면
+- 손, 팔, 소품, 증정품, 추가 제품, 장식 오브제
+- 여러 제품이면 주요 제품 1개만 남기기
+
+━━ 배치 & 출력 ━━
+- 308×308px 캔버스, 제품을 200×200px 안전영역 안에 정중앙 배치
+- PNG, 실제 알파 채널 투명 배경 (체크무늬 절대 금지)
+- 제품 외 그림자·바닥면 생성 금지`;
+
+  // ── 정밀 클렌징 프롬프트 (원본 픽셀 최대한 보존) ─────────────────────
+  const prompt = generative ? generativePrompt : `제품 사진에서 스튜디오 배경만 제거하고 제품 패키지를 투명 PNG로 추출하는 작업입니다.
+
+━━ 이 작업의 핵심 ━━
+"배경 제거"가 아니라 "스튜디오 촬영 배경 제거"입니다.
+제품 패키지 자체의 색상·디자인은 절대 변경하지 마세요.
+
+━━ 절대 건드리면 안 되는 것 (상품 패키지 전체) ━━
+제품 외곽선 안쪽은 단 하나의 픽셀도 변경 금지입니다:
+- 패키지 본체 색상 (초록색·흰색·검정·파랑·노랑 등 어떤 색이든 전부 보존)
+- 패키지 내부 배경색, 그라데이션, 무늬, 질감 → 모두 상품의 일부
+- 패키지 위의 텍스트, 로고, 일러스트, 성분표, 바코드
+- 패키지 형태·구조 전체
+
+━━ 제거 대상 (제품 외곽선 바깥만) ━━
+- 스튜디오 배경지, 테이블, 바닥, 천, 흰 배경 등
+- 제품 외부의 그림자, 반사광, 바닥면
+- 제품 주변의 손, 팔, 소품, 증정품, 추가 제품, 장식 오브제
+- 여러 제품이 있을 경우 주요 제품 1개만 남기고 나머지 제거
+
+━━ 작업 순서 ━━
+1. 제품 패키지의 정확한 외곽 실루엣을 파악
+2. 실루엣 바깥(스튜디오 배경)만 투명 처리
+3. 실루엣 안쪽 픽셀은 원본 그대로 100% 복사 — 색상·형태·화질 변경 절대 금지
+
+━━ 가려진 부분 복원 ━━
+손·소품으로 가려진 패키지 부분이 있다면 동일 패키지의 색상·패턴으로 자연스럽게 복원하세요.
+단, 텍스트·로고는 원본에 있는 것만 복원하고 임의 생성 금지.
+
+━━ 배치 & 크기 ━━
+- 308×308px 캔버스 정중앙 배치
+- 제품이 200×200px 안전영역 안에 들어오도록 조정 (상하좌우 여백 약 54px)
+- 너무 작으면 200px에 가깝게, 너무 크면 200px 이내로 줄이세요
+
+━━ 출력 규칙 ━━
+- PNG, 투명 배경은 반드시 실제 알파 채널 사용 (체크무늬·격자무늬 그리기 절대 금지)
+- 제품 본체 완전 불투명, 원본 화질 그대로 유지
+- 그림자·새 배경색·바닥면 생성 금지`; // ← 정밀 클렌징 프롬프트 끝
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey
+    },
+    body: JSON.stringify({
+      contents: [{
+        parts: [
+          { text: prompt },
+          { inline_data: { mime_type: mimeType, data: b64 } }
+        ]
+      }],
+      generationConfig: {
+        responseModalities: ['TEXT', 'IMAGE']
+      }
+    })
+  });
+
+  if (!res.ok) {
+    let errMsg = `API 오류 (${res.status})`;
+    try {
+      const e = await res.json();
+      errMsg = e.error?.message || errMsg;
+    } catch(_) {}
+    throw new Error(errMsg);
+  }
+
+  const result = await res.json();
+  const parts  = result.candidates?.[0]?.content?.parts ?? [];
+
+  // REST API returns snake_case (inline_data), SDK returns camelCase (inlineData)
+  const imgPart = parts.find(p => p.inlineData || p.inline_data);
+  if (!imgPart) {
+    // Surface any text error from the model
+    const textPart = parts.find(p => p.text);
+    throw new Error(textPart?.text || 'AI가 이미지를 반환하지 않았습니다 — 다시 시도해주세요');
+  }
+
+  const iData      = imgPart.inlineData || imgPart.inline_data;
+  const outMime    = iData.mimeType || iData.mime_type || 'image/png';
+  const outDataUrl = `data:${outMime};base64,${iData.data}`;
+
+  const raw = await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve({ dataUrl: outDataUrl, w: img.naturalWidth, h: img.naturalHeight, aiCleansed: true });
+    img.onerror = () => reject(new Error('결과 이미지 로드 실패'));
+    img.src = outDataUrl;
+  });
+
+  // AI 출력이 실제 알파 PNG인지, 체크무늬/검정 배경이 박힌 이미지인지 엣지 픽셀로 판단
+  const edgeInfo = await new Promise(res => {
+    const tmpImg = new Image();
+    tmpImg.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = tmpImg.naturalWidth; c.height = tmpImg.naturalHeight;
+      const cx = c.getContext('2d'); cx.drawImage(tmpImg, 0, 0);
+      const w = c.width, h = c.height;
+      const pd = cx.getImageData(0, 0, w, h).data;
+      const step = Math.max(1, Math.floor(Math.min(w, h) / 40));
+      let transparent = 0, darkNeutral = 0, paleNeutral = 0, total = 0;
+      function sample(x, y) {
+        const pi = (y * w + x) * 4;
+        const a = pd[pi + 3], r = pd[pi], g = pd[pi + 1], b = pd[pi + 2];
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        const sat = max === 0 ? 0 : (max - min) / max;
+        total++;
+        if (a < 100) transparent++;
+        else if (max < 55 && sat < 0.28) darkNeutral++;
+        else if (max > 185 && sat < 0.18) paleNeutral++;
+      }
+      for (let x = 0; x < w; x += step) {
+        sample(x, 0);
+        sample(x, h - 1);
+      }
+      for (let y = 0; y < h; y += step) {
+        sample(0, y);
+        sample(w - 1, y);
+      }
+      res({
+        hasRealAlpha: transparent > 0,
+        hasArtificialBg: total > 0 && (darkNeutral + paleNeutral) / total > 0.35
+      });
+    };
+    tmpImg.onerror = () => res({ hasRealAlpha: false, hasArtificialBg: true });
+    tmpImg.src = raw.dataUrl;
+  });
+
+  const normalized = await normalizeProductPng(raw.dataUrl, {
+    forceOpaqueContent: !edgeInfo.hasRealAlpha || edgeInfo.hasArtificialBg,
+    removeCheckerboard: !edgeInfo.hasRealAlpha || edgeInfo.hasArtificialBg,
+    pad: OUTPUT_PADDING
+  });
+  normalized.aiCleansed = true;
+  normalized.valid = await validateImage(normalized.dataUrl);
+  return normalized;
+}
+
+// ── AI 검수 + 클렌징 통합 ─────────────────────────────────
+// method: 'auto' | 'removebg' | 'precise' | 'generative'
+// removebg 선택 시 → remove.bg → (Gemini 키 있으면) 각도보정 → 완료 (원스텝)
+async function runAiCleansAndReview(itemId, method = 'auto') {
+  const item = items.find(i => i.id === itemId);
+  if (!item || !item.img) return;
+
+  const removebgKey = document.getElementById('removebg-key')?.value?.trim();
+  const geminiKey   = document.getElementById('gemini-key')?.value?.trim();
+  const hasRb = removebgKey && removebgKey.length > 10;
+  const hasGm = geminiKey   && geminiKey.length   > 10;
+
+  const resolvedMethod = method === 'auto'
+    ? (hasRb ? 'removebg' : hasGm ? 'precise' : null)
+    : method;
+
+  if (!resolvedMethod) {
+    item.cleanError = 'API 키를 먼저 입력해주세요';
+    render(); return;
+  }
+  if (resolvedMethod === 'removebg' && !hasRb) {
+    item.cleanError = 'remove.bg API 키를 입력해주세요';
+    render(); return;
+  }
+  if ((resolvedMethod === 'precise' || resolvedMethod === 'generative') && !hasGm) {
+    item.cleanError = 'Gemini API 키를 입력해주세요';
+    render(); return;
+  }
+
+  item.cleanData  = 'loading';
+  item.aiReview   = 'loading';
+  item.cleanError = null;
+  item.loadingMsg = null;
+  render();
+
+  // AI 검수는 항상 원본 이미지로 병렬 실행
+  const reviewPromise = hasGm
+    ? reviewImageWithGemini(item.img.dataUrl, geminiKey).catch(e => ({ error: e.message }))
+    : Promise.resolve(null);
+
+  try {
+    if (resolvedMethod === 'removebg') {
+      // remove.bg: 배경·오브제 제거 + 크기 정규화 (Gemini 이미지 생성 거치지 않음)
+      item.loadingMsg = '📦 배경·오브제 제거 중...';
+      render();
+      const rbResult = await cleanseWithRemoveBg(item.img.dataUrl, removebgKey);
+      item.cleanData = rbResult;
+      item.cleanMode = 'removebg';
+
+    } else {
+      // Gemini 단독 클렌징
+      item.loadingMsg = resolvedMethod === 'generative' ? '✦ 생성형 재합성 중...' : '🔍 정밀 클렌징 중...';
+      render();
+      item.cleanData = await cleanseWithGemini(item.img.dataUrl, geminiKey, resolvedMethod === 'generative');
+      item.cleanMode = resolvedMethod;
+    }
+  } catch(e) {
+    item.cleanData  = null;
+    item.cleanError = e.message || String(e);
+  }
+
+  item.aiReview   = await reviewPromise;
+  item.loadingMsg = null;
+  render();
+}
+
+// ── Image Cleansing ────────────────────────────────────────
+async function cleanseImage(itemId) {
+  const item = items.find(i => i.id === itemId);
+  if (!item || !item.img) return;
+  const apiKey = document.getElementById('gemini-key')?.value?.trim();
+  if (!apiKey || apiKey.length <= 10) {
+    item.cleanError = 'Gemini API 키를 입력해야 AI 클렌징을 사용할 수 있어요';
+    render();
+    return;
+  }
+  item.cleanData = 'loading';
+  item.cleanError = null;
+  render();
+  try {
+    item.cleanData = await cleanseWithGemini(item.img.dataUrl, apiKey);
+  } catch(e) {
+    item.cleanData = null;
+    item.cleanError = e.message || String(e);
+  }
+  render();
+}
+
+async function doCleanseImage(srcDataUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const sw = img.naturalWidth, sh = img.naturalHeight;
+      const srcCvs = document.createElement('canvas');
+      srcCvs.width = sw; srcCvs.height = sh;
+      const srcCtx = srcCvs.getContext('2d');
+      srcCtx.drawImage(img, 0, 0);
+      const imgData = srcCtx.getImageData(0, 0, sw, sh);
+      const d = imgData.data;
+
+      // Step 1: Detect background color from corners (prefer opaque corners)
+      const corners = [
+        getPixel(d, sw, 0, 0),
+        getPixel(d, sw, sw - 1, 0),
+        getPixel(d, sw, 0, sh - 1),
+        getPixel(d, sw, sw - 1, sh - 1),
+      ];
+      const bgColor = corners.reduce((best, c) => {
+        if (c[3] < 20) return best;      // skip transparent
+        if (best[3] < 20) return c;
+        // Prefer less saturated (more background-like)
+        const satC    = Math.max(...c.slice(0,3)) - Math.min(...c.slice(0,3));
+        const satBest = Math.max(...best.slice(0,3)) - Math.min(...best.slice(0,3));
+        return satC <= satBest ? c : best;
+      }, [255, 255, 255, 0]);
+
+      // Step 2: Flood fill BG removal from all 4 edges
+      // Only remove the detected background color — never blanket-remove white
+      // (white products exist and must be preserved)
+      if (bgColor[3] > 20) {
+        floodFillTransparent(d, sw, sh, bgColor);
+      }
+
+      // Step 3: Find content bounding box
+      const bbox = getContentBBox(d, sw, sh);
+      if (!bbox) { reject(new Error('내용물을 찾을 수 없습니다')); return; }
+
+      // Write modified image data back
+      srcCtx.putImageData(imgData, 0, 0);
+
+      // Step 4: Output 308×308 canvas centered with OUTPUT_PADDING.
+      const OUTPUT = OUTPUT_SIZE, PAD = OUTPUT_PADDING;
+      const contentW = bbox.maxX - bbox.minX + 1;
+      const contentH = bbox.maxY - bbox.minY + 1;
+      const maxSlot  = OUTPUT - PAD * 2;
+      const scale    = Math.min(maxSlot / contentW, maxSlot / contentH);
+      const drawW    = Math.round(contentW * scale);
+      const drawH    = Math.round(contentH * scale);
+      const drawX    = Math.round((OUTPUT - drawW) / 2);
+      const drawY    = Math.round((OUTPUT - drawH) / 2);
+
+      const outCvs = document.createElement('canvas');
+      outCvs.width = OUTPUT; outCvs.height = OUTPUT;
+      const outCtx = outCvs.getContext('2d');
+      outCtx.clearRect(0, 0, OUTPUT, OUTPUT);
+      outCtx.drawImage(srcCvs, bbox.minX, bbox.minY, contentW, contentH, drawX, drawY, drawW, drawH);
+
+      resolve({ dataUrl: outCvs.toDataURL('image/png'), w: OUTPUT, h: OUTPUT });
+    };
+    img.onerror = () => reject(new Error('이미지 로드 실패'));
+    img.src = srcDataUrl;
+  });
+}
+
+// ── Image file input ───────────────────────────────────────
+document.getElementById('img-input').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const drop = document.getElementById('img-drop');
+  drop.classList.remove('required-error');
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const dataUrl = ev.target.result;
+    const valid = await validateImage(dataUrl);
+    pendingImg = { dataUrl, name: file.name, valid };
+    const allOk = valid.issues.every(i => i.k === 'ok');
+    drop.classList.toggle('has-file', true);
+    document.getElementById('img-drop-label').innerHTML =
+      `${allOk ? '✓' : '검수 필요'} ${esc(file.name)} (${valid.w}×${valid.h}px)`;
+  };
+  reader.readAsDataURL(file);
+});
+
+// ── Char counter ───────────────────────────────────────────
+document.getElementById('text-input').addEventListener('input', e => {
+  const n = e.target.value.length;
+  const el = document.getElementById('char-count');
+  el.textContent = `${n} / 12`;
+  el.className = 'char-count' + (n > 12 ? ' over' : '');
+});
+
+// ── Add item ───────────────────────────────────────────────
+function addItem() {
+  const raw = document.getElementById('text-input').value;
+  if (!raw.trim()) { alert('메뉴명을 입력해주세요'); return; }
+  if (!pendingImg) {
+    const drop = document.getElementById('img-drop');
+    drop.classList.add('required-error');
+    document.getElementById('img-drop-label').innerHTML =
+      '이미지를 먼저 업로드해주세요 <span style="font-weight:700">(필수)</span>';
+    return;
+  }
+  const newItem = pushItem(raw.trim(), pendingImg);
+  document.getElementById('text-input').value = '';
+  document.getElementById('char-count').textContent = '0 / 12';
+  document.getElementById('char-count').className = 'char-count';
+  clearPending();
+  render();
+  // remove.bg 키 있으면 추가 즉시 자동 클렌징 실행
+  const removebgKeyAuto = document.getElementById('removebg-key')?.value?.trim();
+  if (removebgKeyAuto && removebgKeyAuto.length > 10) {
+    runAiCleansAndReview(newItem.id, 'removebg');
+  }
+}
+
+function pushItem(text, img) {
+  const item = {
+    id: nextId++,
+    text,
+    img: img || null,
+    tv: validateText(text),
+    cleanData: null,
+    cleanError: null,
+    aiReview: null,
+  };
+  items.unshift(item);
+  return item;
+}
+
+function clearPending() {
+  pendingImg = null;
+  const drop = document.getElementById('img-drop');
+  drop.classList.remove('has-file', 'required-error');
+  document.getElementById('img-drop-label').innerHTML = '이미지 업로드 <span style="color:var(--color-system-red);font-weight:700">(필수)</span>';
+  document.getElementById('img-input').value = '';
+}
+
+// ── Delete ─────────────────────────────────────────────────
+function deleteItem(id) {
+  items = items.filter(i => i.id !== id);
+  render();
+}
+
+function itemStatus(item) {
+  const aiIssues = item.aiReview && item.aiReview !== 'loading' && !item.aiReview.error && item.aiReview.checks
+    ? item.aiReview.checks.map(c => ({ k: c.status }))
+    : [];
+  const all = [...item.tv.issues, ...(item.img ? item.img.valid.issues : [IMAGE_REQUIRED_ISSUE]), ...aiIssues];
+  if (all.some(i => i.k === 'error')) return 'error';
+  if (all.some(i => i.k === 'warn' || i.k === 'info')) return 'warn';
+  return 'ok';
+}
+
+// ── Render ─────────────────────────────────────────────────
+function render() {
+  const total  = items.length;
+  const errors = items.filter(i => itemStatus(i) === 'error').length;
+  const warns  = items.filter(i => itemStatus(i) === 'warn').length;
+  const oks    = items.filter(i => itemStatus(i) === 'ok').length;
+
+
+  const visible = items;
+
+  // Left list
+  document.getElementById('item-list').innerHTML = items.map(item => {
+    const s = itemStatus(item);
+    const dotClr = s === 'error' ? 'var(--color-system-red)' : s === 'warn' ? 'var(--color-coral-orange)' : 'var(--color-olive-green-50)';
+    return `
+      <div class="list-row" onclick="scrollCard(${item.id})">
+        <span class="list-dot" style="background:${dotClr}"></span>
+        <span class="list-text">${esc(item.text)}</span>
+        <button class="list-del" onclick="event.stopPropagation();deleteItem(${item.id})">✕</button>
+      </div>`;
+  }).join('');
+
+  // Cards grid
+  const grid = document.getElementById('cards-grid');
+  if (!visible.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">${items.length ? '🔍' : '📋'}</div>
+        <div class="empty-title">${items.length ? '해당 필터에 맞는 항목이 없어요' : '검수할 항목이 없어요'}</div>
+        <div class="empty-desc">${items.length ? '다른 필터를 선택해보세요' : '왼쪽 패널에서 메뉴명을 입력하고<br>이미지를 업로드해 검수를 시작하세요'}</div>
+      </div>`;
+    return;
+  }
+  grid.innerHTML = visible.map(renderCard).join('');
+}
+
+function statusOf(issues) {
+  if (issues.some(i => i.k === 'error')) return 'error';
+  if (issues.some(i => i.k === 'warn' || i.k === 'info')) return 'warn';
+  return 'ok';
+}
+
+function needsObjectRemoval(item) {
+  if (!item?.aiReview || item.aiReview === 'loading' || item.aiReview.error || !Array.isArray(item.aiReview.checks)) {
+    return false;
+  }
+  const objectWords = /(손|팔|모델|사람|소품|오브제|증정품|추가\s*상품|추가\s*제품|장식|나뭇잎|꽃|돌|접시|쟁반|포장지|촬영\s*도구)/;
+  return item.aiReview.checks.some(c => {
+    if (c.status === 'ok') return false;
+    const rule = Number(c.rule);
+    const msg = String(c.message || '');
+    return rule === 2 || objectWords.test(msg);
+  });
+}
+
+function reviewCheckForDisplay(check, item) {
+  const cleanIssues = item?.cleanData?.valid?.issues || [];
+  const hasCleanImage = item?.cleanData && item.cleanData !== 'loading' && item.cleanData.dataUrl;
+  if (!hasCleanImage || check.status === 'ok') {
+    return check;
+  }
+
+  const rule = Number(check.rule);
+  const msg = String(check.message || '');
+  const cleanRuleOk = r => cleanIssues.some(i => Number(i.r) === r && i.k === 'ok');
+  const objectRemovedMsg = () => {
+    if (/올리브|나뭇가지|열매/.test(msg)) return '올리브 나뭇가지와 열매 등 장식 오브제를 제거했어요.';
+    if (/손|팔|모델|사람/.test(msg)) return '제품 외 손·모델 요소를 제거했어요.';
+    if (/증정품|추가\s*상품|추가\s*제품/.test(msg)) return '주요 제품 외 추가 상품을 제거했어요.';
+    if (/소품|오브제|장식|나뭇잎|꽃|돌|접시|쟁반|포장지/.test(msg)) return '제품 외 소품과 장식 오브제를 제거했어요.';
+    return '제품 외 오브제를 제거했어요.';
+  };
+
+  if ((rule === 5 || /중앙|치우|오프셋/.test(msg)) && cleanRuleOk(5)) {
+    return { ...check, status: 'ok', message: '상품을 중앙정렬했습니다.' };
+  }
+  if (rule === 6 || /정사각형|정방형/.test(msg)) {
+    // 클렌징 후 출력은 항상 308×308 정사각형
+    return { ...check, status: 'ok', message: '308×308px 정사각형으로 변환했습니다.' };
+  }
+  if ((rule === 7 || /여백|안전영역|크기/.test(msg)) && cleanRuleOk(7)) {
+    return { ...check, status: 'ok', message: '안전영역에 맞춰 여백을 조정했습니다.' };
+  }
+  if ((rule === 1 || /배경|투명|PNG/.test(msg)) && cleanRuleOk(1)) {
+    return { ...check, status: 'ok', message: '투명 배경 PNG로 변환했습니다.' };
+  }
+  if ((rule === 2 || /손|팔|모델|사람|소품|오브제|증정품|추가\s*상품|추가\s*제품|장식|나뭇가지|열매|나뭇잎|꽃|돌|접시|쟁반|포장지/.test(msg))) {
+    return { ...check, status: 'ok', message: objectRemovedMsg() };
+  }
+  if ((rule === 9 || /그림자|바닥|바닥면|반사광|배경색/.test(msg))) {
+    return { ...check, status: 'ok', message: '상품 외부의 그림자와 바닥면을 제거했습니다.' };
+  }
+  return check;
+}
+
+function shouldShowImageReviewCheck(check) {
+  const msg = String(check?.message || '').trim();
+  if (!msg) return false;
+  if (check.status !== 'ok') return true;
+  return !/(문제\s*없|문제없|이상\s*없|정상입니다|양호합니다|적합합니다|괜찮습니다)/.test(msg);
+}
+
+function renderCard(item) {
+  const s = itemStatus(item);
+  const sLabel = s === 'error' ? '수정필요' : s === 'warn' ? '주의' : null;
+
+  // 문구/이미지 각각의 상태 계산
+  const textSt = statusOf(item.tv.issues);
+  const aiIssues = item.aiReview && item.aiReview !== 'loading' && !item.aiReview.error && item.aiReview.checks
+    ? item.aiReview.checks.map(c => ({ k: c.status }))
+    : [];
+  const imgIssues = [...(item.img ? item.img.valid.issues : [IMAGE_REQUIRED_ISSUE]), ...aiIssues];
+  const imgSt = statusOf(imgIssues);
+
+  const textBad = textSt === 'error' || textSt === 'warn';
+  const imgBad  = imgSt  === 'error' || imgSt  === 'warn';
+
+  let title;
+  if (!textBad && !imgBad)        title = '문구와 이미지 모두 적절해요';
+  else if (textBad && !imgBad)    title = '문구 수정이 필요해요';
+  else if (!textBad && imgBad)    title = '이미지 수정이 필요해요';
+  else                            title = '문구와 이미지 수정이 필요해요';
+
+  const tv = item.tv;
+
+  // Label: show original text, break-all for preview
+  const textBadgesHtml = tv.issues.map(i => vItem(i)).join('');
+
+  const tobeText = tv.hasSlash ? item.text.replace(/\//g, '·') : item.text;
+  const tobeLines = countLines(tobeText, MAX_W);
+  const tobeOk = tobeLines <= 2;
+  const asisImgHtml = item.img
+    ? `<img src="${item.img.dataUrl}" alt="">`
+    : `<div class="sug-img-placeholder">이미지<br>없음</div>`;
+  const hasCleanImage = item.cleanData && item.cleanData !== 'loading' && item.cleanData.dataUrl;
+  const tobeImgHtml = hasCleanImage
+    ? `<img src="${item.cleanData.dataUrl}" alt="">`
+    : asisImgHtml;
+  // hasCleanImage → small green badge at bottom; waiting → full dim + centered label
+  const tobeImageBadge = hasCleanImage
+    ? ''
+    : `<div class="img-dim-overlay"><span style="font-size:10px;font-weight:600;color:var(--color-white);text-align:center;line-height:1.4">이미지<br>검수 대기</span></div>`;
+  const tobeTitleHtml = hasCleanImage
+    ? `<div class="sug-col-title" style="display:flex;align-items:center;gap:5px">TOBE <span style="color:var(--color-system-blue);font-weight:700;font-size:9px;letter-spacing:0.2px">AI 검수 완료</span></div>`
+    : `<div class="sug-col-title">TOBE</div>`;
+  const reviewCompareHtml = `
+    <div class="sug-wrap">
+      <div class="sug-inner">
+        <div class="sug-col">
+          <div class="sug-col-title">ASIS</div>
+          <div class="sug-img-wrap">${asisImgHtml}</div>
+          <div class="sug-label-text" style="color:var(--color-coral-orange)">${esc(item.text)}</div>
+        </div>
+        <div class="sug-arrow">→</div>
+        <div class="sug-col">
+          ${tobeTitleHtml}
+          <div class="sug-img-wrap is-tobe">
+            ${tobeImgHtml}
+            ${tobeImageBadge}
+          </div>
+          <div class="sug-label-text" style="color:${tobeOk?'var(--color-olive-green-90)':'var(--color-system-red)'}">${esc(tobeText)}</div>
+        </div>
+      </div>
+    </div>`;
+  const copyReviewHtml = `<div class="v-list">${textBadgesHtml}</div>`;
+
+  // Image badges
+  let imgBadgesHtml = '';
+  if (item.img) {
+    imgBadgesHtml = item.img.valid.issues.map(i => vItem(i)).join('');
+  } else {
+    imgBadgesHtml = vItem(IMAGE_REQUIRED_ISSUE);
+  }
+  const hasImageResult = item.cleanData === 'loading'
+    || item.aiReview === 'loading'
+    || (item.cleanData && item.cleanData !== 'loading')
+    || (item.aiReview && item.aiReview !== 'loading');
+
+  // ── AI 검수 + 클렌징 통합 섹션 ──────────────────────────
+  let aiReviewHtml = '';
+  let cleanseHtml  = '';
+
+  if (item.img) {
+    const isLoading = item.cleanData === 'loading' || item.aiReview === 'loading';
+    const hasDone   = (item.cleanData && item.cleanData !== 'loading') || (item.aiReview && item.aiReview !== 'loading');
+
+    if (isLoading) {
+      cleanseHtml = `
+        <div class="cleanse-section">
+          <button class="cleanse-btn" disabled>⏳ ${item.loadingMsg || 'AI 검수 중...'}</button>
+        </div>`;
+    } else if (hasDone) {
+      // AI 검수 결과
+      let reviewResultHtml = '';
+      if (item.aiReview?.error) {
+        reviewResultHtml = `<div class="cleanse-error" style="margin-bottom:8px">AI 검수 실패: ${esc(item.aiReview.error)}</div>`;
+      } else if (item.aiReview?.checks) {
+        const reviewItems = item.aiReview.checks
+          .map(c => reviewCheckForDisplay(c, item))
+          .filter(shouldShowImageReviewCheck)
+          .map(c => vItem({ k: c.status, m: c.message }))
+          .join('');
+        reviewResultHtml = reviewItems
+          ? `<div class="v-list" style="margin-bottom:10px">${reviewItems}</div>`
+          : '';
+      }
+
+      // 클렌징 결과
+      let cleanResultHtml = '';
+      let retryRemoveBgHtml = '';
+      if (item.cleanData?.dataUrl) {
+        const modeTag = item.cleanMode === 'removebg' ? '<span style="background:var(--color-white);color:var(--color-olive-green-90);border:1px solid var(--color-success-line);padding:1px 6px;border-radius:999px;font-size:9px;font-weight:800;margin-left:4px">remove.bg</span>'
+          : item.cleanMode === 'object-removal' ? '<span style="background:var(--color-gray-5);color:var(--color-gray-80);padding:1px 6px;border-radius:999px;font-size:9px;font-weight:800;margin-left:4px">AI 오브제 제거</span>'
+          : '';
+        const rbKeyForResult = document.getElementById('removebg-key')?.value?.trim();
+        const hasRbKeyForResult = rbKeyForResult && rbKeyForResult.length > 10;
+        retryRemoveBgHtml = hasRbKeyForResult
+          ? `<button class="cleanse-btn" style="background:var(--color-gray-10);color:var(--color-gray-70);border-color:var(--color-gray-30);margin-top:8px" onclick="runAiCleansAndReview(${item.id},'removebg')">🔄 배경 제거·규격 맞춤 재시도</button>`
+          : '';
+        cleanResultHtml = `
+          <div class="cleanse-result">
+            <div class="section-mini-label" style="color:var(--color-gray-80);margin-bottom:8px">클렌징 완료${modeTag}</div>
+            <div class="cleanse-compare">
+              <div class="cleanse-side">
+                <div class="cleanse-side-label">BEFORE</div>
+                <img src="${item.img.dataUrl}" style="width:64px;height:64px;object-fit:contain;border-radius:8px;background:var(--color-gray-10);border:1px solid var(--color-gray-15)">
+              </div>
+              <div class="cleanse-arrow">→</div>
+              <div class="cleanse-side">
+                <div class="cleanse-side-label">AFTER</div>
+                <img src="${item.cleanData.dataUrl}" style="width:64px;height:64px;object-fit:contain;border-radius:8px;border:1px solid var(--color-gray-15);background:var(--color-gray-8)" class="checker-bg">
+              </div>
+            </div>
+            <a class="dl-btn" href="${item.cleanData.dataUrl}" download="${esc(item.text)}_clean.png" style="background:var(--color-system-blue);border-radius:8px">PNG 다운로드</a>
+            ${retryRemoveBgHtml}
+          </div>`;
+      } else if (item.cleanError) {
+        cleanResultHtml = `<div class="cleanse-error">클렌징 실패: ${esc(item.cleanError)}</div>`;
+      }
+
+      const gmKey2 = document.getElementById('gemini-key')?.value?.trim();
+      const hasGmKey2 = gmKey2 && gmKey2.length > 10;
+      const showObjectRemoval2 = hasGmKey2 && needsObjectRemoval(item);
+      const objectRemovalHint2 = showObjectRemoval2
+        ? '<p style="font-size:11px;color:var(--color-gray-60);line-height:1.55;margin:8px 0 2px">제품 외 손·소품·증정품이 아직 남아 있다면 아래 버튼으로 한 번 더 정리해보세요.</p>'
+        : '';
+      cleanseHtml = `
+        <div class="cleanse-section">
+          ${cleanResultHtml}
+          ${reviewResultHtml}
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+            ${objectRemovalHint2}
+            ${showObjectRemoval2 ? `<button class="cleanse-btn" style="background:var(--color-gray-5);color:var(--color-gray-80);border-color:var(--color-gray-30)" onclick="runObjectRemoval(${item.id})">✋ 손·오브제 AI 제거</button>` : ''}
+          </div>
+        </div>`;
+    } else {
+      const rbKey = document.getElementById('removebg-key')?.value?.trim();
+      const hasRbKey = rbKey && rbKey.length > 10;
+      const gmKey = document.getElementById('gemini-key')?.value?.trim();
+      const hasGmKey = gmKey && gmKey.length > 10;
+      const showObjectRemoval = hasGmKey && needsObjectRemoval(item);
+      const objectRemovalHint = showObjectRemoval
+        ? '<p style="font-size:11px;color:var(--color-gray-60);line-height:1.55;margin:6px 0 0">제품 외 손·소품·증정품이 감지됐어요. 필요하면 아래 버튼으로 한 번 더 정리해보세요.</p>'
+        : '';
+      cleanseHtml = `
+        <div class="cleanse-section">
+          <p style="font-size:12px;color:var(--color-gray-60);line-height:1.6;margin-bottom:8px">아래 버튼을 눌러서 이미지 가공을 진행해주세요.</p>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            ${hasRbKey
+              ? `<button class="cleanse-btn" style="background:var(--color-olive-green-90);color:var(--color-white);border-color:var(--color-olive-green-90);font-size:13px;padding:10px" onclick="runAiCleansAndReview(${item.id},'removebg')">🧹 배경 제거·규격 맞춤</button>
+                 <p style="font-size:10px;color:var(--color-gray-40);margin-top:-2px;line-height:1.5;margin-bottom:2px">배경·소품·오브제 제거 + 크기 정규화</p>`
+              : `<div style="font-size:11px;color:var(--color-gray-50);background:var(--color-gray-5);border:1px solid var(--color-gray-15);border-radius:7px;padding:8px 10px">remove.bg 키 입력 시 배경·오브제 제거가 가능해요</div>`
+            }
+            ${showObjectRemoval
+              ? `${objectRemovalHint}
+                 <button class="cleanse-btn" style="background:var(--color-gray-5);color:var(--color-gray-80);border-color:var(--color-gray-30)" onclick="runObjectRemoval(${item.id})">✋ 손·오브제 AI 제거</button>
+                 <p style="font-size:10px;color:var(--color-gray-40);margin-top:-2px;line-height:1.5">AI 검수에서 손·오브제가 감지되어 표시됩니다</p>`
+              : ''
+            }
+          </div>
+          ${item.cleanError ? `<div class="cleanse-error" style="margin-top:8px">${esc(item.cleanError)}</div>` : ''}
+        </div>`;
+    }
+  }
+
+  return `
+    <div class="menu-card" id="card-${item.id}">
+      <div class="card-head">
+        <span class="card-num">#${item.id}</span>
+        <button class="list-del" onclick="deleteItem(${item.id})">✕</button>
+      </div>
+
+      <div class="card-body-cols">
+        <!-- 좌: ASIS/TOBE 비교 -->
+        <div class="card-body-left">
+          <div class="review-head">
+            ${sLabel ? `<span class="card-status-badge s-${s}" style="display:inline-block;margin-bottom:8px">${sLabel}</span>` : ''}
+            <div class="review-title">${title}</div>
+          </div>
+          ${reviewCompareHtml}
+        </div>
+
+        <!-- 우: 검수 리스트 -->
+        <div class="card-body-right">
+          <div class="review-cols">
+            <div class="review-col">
+              <div class="section-mini-label">문구 검수</div>
+              ${copyReviewHtml}
+            </div>
+            <div class="review-col">
+              <div class="section-mini-label">이미지 검수</div>
+              ${hasImageResult ? cleanseHtml : `<div class="v-list">${imgBadgesHtml}</div>${aiReviewHtml}${cleanseHtml}`}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function vItem(i) {
+  const icons = { ok: '✓', warn: '⚠', error: '✗', info: '→' };
+  return `<div class="v-item v-${i.k}"><span class="v-icon">${icons[i.k]}</span><span>${esc(i.m)}</span></div>`;
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function scrollCard(id) {
+  const el = document.getElementById(`card-${id}`);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Enter key
+document.getElementById('text-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addItem();
+});
+
+render();
+</script>
+</body>
+</html>
